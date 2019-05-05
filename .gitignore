@@ -1,0 +1,5 @@
+*.retry
+hosts
+!*.example
+group_vars/*
+!group_vars/*.example

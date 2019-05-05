@@ -1,0 +1,13 @@
+---
+# tasks file for runner
+- name: Install the Runner
+  get_url:
+      url: https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
+      dest: /usr/local/bin/gitlab-runner
+      mode: 0755
+
+- name: Install Runner and run as a service
+   command: gitlab-runner install >
+   --user="{{  }}"
+   --working-directory=/home/"{{ runner_user }}"
+   notify: start gitlab-runner

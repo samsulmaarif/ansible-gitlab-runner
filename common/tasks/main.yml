@@ -1,0 +1,13 @@
+---
+# tasks file for common
+- name: Add user {{ runner_user }}
+  user:
+    name: "{{ runner_user }}"
+    groups: users,docker
+    comment: GitLab Runner
+    shell: /bin/bash
+    home: /home/"{{ runner_user }}"
+
+- name: Set timezone to Asia/Jakarta
+  timezone:
+    name: Asia/Jakarta

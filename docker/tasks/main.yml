@@ -1,0 +1,9 @@
+---
+# tasks file for docker
+- name: Install Docker from repository
+  zypper:
+    name:
+        - docker
+        - docker-compose
+    state: latest
+  notify: restart docker

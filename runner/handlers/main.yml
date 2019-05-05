@@ -1,0 +1,19 @@
+---
+# handlers file for runner
+- name: check if gitlab-runner is present
+  stat:
+      path: /usr/local/bin/gitlab-runner
+  register: runner_present
+
+- name: List configured runners
+  command: gitlab-runner list
+  register: configured_runners
+  changed_when: False
+
+- name: start gitlab-runner
+  command: gitlab-runner start
+  when: runner_present.stat.exist == true
+
+- name: Register runner to GitLab
+  command: gitlab-runner restart
+  when: configured_runners.stderr.find('\n{{ runner_description }}') == -1
