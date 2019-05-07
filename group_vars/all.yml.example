@@ -1,8 +1,11 @@
 runner_user: gitlab-runner
-runner_registration_token: 
+runner_registration_token:
 runner_concurrent: 1
 runner_coordinator_url: https://gitlab.com/
-runner_description: 
+runner_description:
 runner_executor: docker
 runner_docker_image: alpine
-runner_tags: dot
+runner_tags:
+  - dot
+  - docker
+runner_path: /usr/local/bin/gitlab-runner

@@ -1,4 +1,4 @@
 [runner]
-runner01
-runner02
-runner03
+runner01 ansible_host=10.1.1.220
+runner02 ansible_host=10.1.1.221
+runner03 ansible_host=10.1.1.222

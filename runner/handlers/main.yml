@@ -2,18 +2,23 @@
 # handlers file for runner
 - name: check if gitlab-runner is present
   stat:
-      path: /usr/local/bin/gitlab-runner
+      path: >
+        "{{ runner_path }}"
   register: runner_present
+  changed_when: False
 
 - name: List configured runners
-  command: gitlab-runner list
+  shell: >
+   "{{ runner_path }}" list
   register: configured_runners
   changed_when: False
 
 - name: start gitlab-runner
-  command: gitlab-runner start
-  when: runner_present.stat.exist == true
+  shell: >
+    "{{ runner_path }}" start
+  when: runner_present.stat.exists == True
 
-- name: Register runner to GitLab
-  command: gitlab-runner restart
-  when: configured_runners.stderr.find('\n{{ runner_description }}') == -1
+- name: Restart the runner
+  shell: >
+    "{{ runner_path }}" restart
+  when: configured_runners.stderr.find('\n runner_description') == -1

@@ -1,13 +1,59 @@
 ---
 # tasks file for runner
+- name: Add user {{ runner_user }}
+  user:
+    name: "{{ runner_user }}"
+    groups: users,docker
+    comment: GitLab Runner
+    shell: /bin/bash
+    home: /home/"{{ runner_user }}"
+
+- name: check if gitlab-runner executable is present
+  stat:
+      path: "{{ runner_path }}"
+  register: r
+
+- name: Create directory for gitlab-runner config
+  file:
+      path: /etc/gitlab-runner/
+      state: directory
+
+- name: check if gitlab-runner config file is present
+  stat:
+      path: /etc/gitlab-runner/config.toml
+  register: c
+
+- name: Add initial gitlab-runner config file
+  template:
+      src: config.toml.j2
+      dest: /etc/gitlab-runner/config.toml
+  when: c.stat.exists == False
+
 - name: Install the Runner
   get_url:
       url: https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
-      dest: /usr/local/bin/gitlab-runner
+      dest: "{{ runner_path }}"
       mode: 0755
+  when: r.stat.exists == False
+
+- name: Populate service facts
+  service_facts:
 
 - name: Install Runner and run as a service
-   command: gitlab-runner install >
-   --user="{{  }}"
-   --working-directory=/home/"{{ runner_user }}"
-   notify: start gitlab-runner
+  shell: >
+    {{ runner_path }} install
+    --user={{ runner_user }}
+    --working-directory=/home/{{ runner_user }}
+  notify: start gitlab-runner
+  when: "'gitlab-runner' in services "
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Set concurrent option
+  lineinfile:
+    dest: /etc/gitlab-runner/config.toml
+    regexp: ^concurrent =
+    line: concurrent = {{ runner_concurrent }}
+    state: present
