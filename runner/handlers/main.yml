@@ -1,6 +1,6 @@
 ---
 # handlers file for runner
-- name: check if gitlab-runner is present
+- name: check if gitlab-runner executable is present
   stat:
       path: >
         "{{ runner_path }}"
@@ -13,12 +13,19 @@
   register: configured_runners
   changed_when: False
 
-- name: start gitlab-runner
-  shell: >
-    "{{ runner_path }}" start
+- name: Start gitlab-runner
+  systemd:
+    name: gitlab-runner
+    state: started
   when: runner_present.stat.exists == True
 
+- name: Force restart the runner
+  systemd:
+    name: gitlab-runner
+    state: restarted
+    force: yes
+
 - name: Restart the runner
-  shell: >
-    "{{ runner_path }}" restart
-  when: configured_runners.stderr.find('\n runner_description') == -1
+  systemd:
+    name: gitlab-runner
+    state: restarted

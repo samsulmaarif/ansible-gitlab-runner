@@ -1,10 +1,7 @@
 ---
 # handlers file for register-runner
-- name: Populate service facts
-  service_facts:
-
 - name: Restart the runner
-  become_user: root
-  shell: >
-    {{ runner_path }} restart
-  when: "'gitlab-runner' in services "
+  systemd:
+    name: gitlab-runner
+    state: restarted
+    force: yes

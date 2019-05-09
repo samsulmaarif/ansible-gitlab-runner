@@ -1,16 +1,22 @@
 ---
 # tasks file for common
+- name: Install NTP package from repository
+  zypper:
+    name:
+        - ntp
+    state: present
+
 - name: Set timezone to Asia/Jakarta
   timezone:
-    name: Asia/Jakarta
+    name: "{{ runner_timezone }}"
 
 - name: Check if hostname is configured
   shell: >
-      hostname -f
+      hostname
   register: current_hostname
   changed_when: False
 
-- name: Set hostname to {{ inventory_hostname }}
+- name: Set hostname to {{ inventory_hostname }} respectively
   shell: >
       hostnamectl set-hostname {{ inventory_hostname }}
   when: current_hostname.stdout != inventory_hostname
@@ -19,5 +25,5 @@
   lineinfile:
     dest: /etc/hosts
     regexp: "{{ inventory_hostname }}"
-    line: 127.0.0.1 {{ inventory_hostname }}
+    line: "{{ ansible_host }} {{ inventory_hostname }}"
     state: present

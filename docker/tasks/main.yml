@@ -5,5 +5,10 @@
     name:
         - docker
         - docker-compose
-    state: latest
+    state: present
+
+- name: Enable docker service
+  systemd:
+    name: docker
+    enabled: yes
   notify: restart docker

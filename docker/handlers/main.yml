@@ -1,6 +1,7 @@
 ---
 # handlers file for docker
 - name: restart docker
-  service:
+  systemd:
     name: docker
     state: restarted
+    force: yes

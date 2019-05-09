@@ -1,4 +1,6 @@
 runner_user: gitlab-runner
+runner_timezone: Asia/Jakarta
+runner_host_user: samsul
 runner_registration_token:
 runner_concurrent: 1
 runner_coordinator_url: https://gitlab.com/

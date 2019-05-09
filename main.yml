@@ -1,7 +1,7 @@
 ---
 - name: Deploying GitLab runner in openSUSE 15.1
   hosts: runner
-  remote_user: samsul
+  remote_user: "{{ runner_host_user }}"
   become: yes
   become_user: root
   roles:

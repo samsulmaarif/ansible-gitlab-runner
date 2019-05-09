@@ -12,7 +12,7 @@
     --non-interactive
     --url '{{ runner_coordinator_url }}'
     --registration-token '{{ runner_registration_token }}'
-    --description '{{ runner_description }}-{{ inventory_hostname }}'
+    --description '{{ runner_description }} {{ inventory_hostname }}'
     --tag-list '{{ runner_tags | join(",") }}'
     --executor '{{ runner_executor }}'
     --docker-image '{{ runner_docker_image }}'

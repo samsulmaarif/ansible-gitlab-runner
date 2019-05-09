@@ -6,7 +6,7 @@
     groups: users,docker
     comment: GitLab Runner
     shell: /bin/bash
-    home: /home/"{{ runner_user }}"
+    home: /home/{{ runner_user }}
 
 - name: check if gitlab-runner executable is present
   stat:
@@ -29,7 +29,7 @@
       dest: /etc/gitlab-runner/config.toml
   when: c.stat.exists == False
 
-- name: Install the Runner
+- name: Install the GitLab Runner executable
   get_url:
       url: https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
       dest: "{{ runner_path }}"
@@ -39,17 +39,30 @@
 - name: Populate service facts
   service_facts:
 
+- name: Test if gitlab-runner is able to start
+  systemd:
+    name: gitlab-runner
+    state: started
+  register: runner_is_started
+  ignore_errors: yes
+
 - name: Install Runner and run as a service
   shell: >
     {{ runner_path }} install
     --user={{ runner_user }}
     --working-directory=/home/{{ runner_user }}
-  notify: start gitlab-runner
-  when: "'gitlab-runner' in services "
+  when: runner_is_started is failed
 
 - name: Reload systemd daemon
   systemd:
     daemon_reload: yes
+  notify: Start gitlab-runner
+
+- name: Enable the gitlab-runner service
+  systemd:
+    name: gitlab-runner
+    enabled: yes
+  notify: Restart the runner
 
 - name: Set concurrent option
   lineinfile:
@@ -57,3 +70,4 @@
     regexp: ^concurrent =
     line: concurrent = {{ runner_concurrent }}
     state: present
+  notify: Force restart the runner
