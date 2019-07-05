@@ -1,0 +1,47 @@
+---
+# tasks file for node-exporter
+- name: Check if Node Exporter is installed
+  stat:
+      path: /opt/node_exporter/node_exporter
+  register: node_exporter_path
+
+- name: Install Node Exporter for Prometheus
+  unarchive:
+      src: https://github.com/prometheus/node_exporter/releases/download/v{{ additional.node_exporter.version }}/node_exporter-{{ additional.node_exporter.version }}.linux-{{ additional.node_exporter.arch }}.tar.gz
+      dest: /opt
+      remote_src: yes
+  when:  additional.node_exporter.deploy and node_exporter_path.stat.exists == False
+
+- name: Check directory name of node_exporter
+  stat:
+      path: /opt/node_exporter-{{ additional.node_exporter.version }}.linux-{{ additional.node_exporter.arch }}
+  register: node_exporter_extracted_dir
+
+- name: Rename Node Exporter folder to /opt/node_exporter
+  command: >
+      mv  /opt/node_exporter-{{ additional.node_exporter.version }}.linux-{{ additional.node_exporter.arch }}
+      /opt/node_exporter
+  when: node_exporter_extracted_dir.stat.exists and additional.node_exporter.deploy
+
+- name: Check directory name of node_exporter
+  file:
+      path: /opt/node_exporter-{{ additional.node_exporter.version }}.linux-{{ additional.node_exporter.arch }}
+      state: absent
+  when: node_exporter_extracted_dir.stat.exists and additional.node_exporter.deploy
+
+- name: Install node_exporter as a systemd service
+  template:
+      src: node_exporter.j2
+      dest: /etc/systemd/system/node_exporter.service
+      owner: root
+      group: root
+      mode: 0755
+  notify: Reload systemd daemon
+  when : additional.node_exporter.deploy
+
+- name: Enable the node_exporter service
+  systemd:
+      name: node_exporter
+      enabled: yes
+  notify: Restart node_exporter
+  when: additional.node_exporter.deploy

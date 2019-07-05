@@ -6,7 +6,7 @@ Note that this playbook only tested in openSUSE Leap 15.1
 
 You should prepare the VM/Server yourself. You could use the `clone.sh` script if you already has VM named `leap15.1` in your KVM Virtualization server.
 
-If you just install minimal version of openSUSE Leap 15.1, may be you should install `python` and `python-xml` first. Thus package is needed by the **zypper ansible module**.
+If you just install minimal version of openSUSE Leap 15.1, you should install `python` and `python-xml` first. Thus package is needed by the **zypper ansible module**.
 
 ```
 ansible all -i hosts -m raw -a "zypper install -y python python-xml" -u your-leap-user-name --become --become-user root --ask-become-pass
@@ -53,6 +53,18 @@ runner_tags:
     - dot
     - docker
 runner_path: /usr/local/bin/gitlab-runner
+additional:
+    node_exporter:
+        deploy: yes
+        version: 0.18.0
+        arch: amd64
+    docker_exporter:
+       deploy: yes
+       port: 9323
+    ctop:
+        deploy: yes
+        version: 0.7.2
+        arch: amd64
 ```
 
 Run the playbook

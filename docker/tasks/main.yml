@@ -7,8 +7,27 @@
         - docker-compose
     state: present
 
+- name: Add docker exporter
+  template:
+      src: daemon.j2
+      dest: /etc/docker/daemon.json
+  when: additional.docker_exporter.deploy
+
 - name: Enable docker service
   systemd:
     name: docker
     enabled: yes
   notify: restart docker
+
+- name: Check if Ctop is installed
+  stat:
+      path: /usr/local/bin/ctop
+  register: ctop_path
+
+- name: Install Ctop for monitoring running container
+  get_url:
+      url: https://github.com/bcicen/ctop/releases/download/v{{ additional.ctop.version }}/ctop-{{ additional.ctop.version }}-linux-{{ additional.ctop.arch }}
+      dest: /usr/local/bin/ctop
+      mode: 0755
+      remote_src: yes
+  when:  additional.ctop.deploy and ctop_path.stat.exists == False

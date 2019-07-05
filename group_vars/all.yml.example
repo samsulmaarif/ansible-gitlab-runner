@@ -11,3 +11,15 @@ runner_tags:
   - dot
   - docker
 runner_path: /usr/local/bin/gitlab-runner
+additional:
+    node_exporter:
+        deploy: no
+        version: 0.18.0
+        arch: amd64
+    docker_exporter:
+       deploy: no
+       port: 9323
+    ctop:
+        deploy: no
+        version: 0.7.2
+        arch: amd64
