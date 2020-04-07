@@ -1,6 +1,6 @@
 # Ansible Playbook to Deploy GitLab Runner
 
-Note that this playbook only tested in openSUSE Leap 15.1
+Note that this playbook only tested in openSUSE Leap 15.1 and Ubuntu 18.04
 
 ## Prepare the VM/Server
 
