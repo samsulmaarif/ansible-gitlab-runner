@@ -4,8 +4,21 @@
   zypper:
     name:
         - docker
-        - docker-compose
     state: present
+  when: ansible_os_family == "Suse"
+
+- name: Install Docker for Debian based
+  apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install docker-compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-{{ansible_system}}-{{ansible_architecture}}"
+    dest: /usr/bin/docker-compose
+    mode: +x
 
 - name: Add docker exporter
   template:

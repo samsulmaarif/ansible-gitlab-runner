@@ -1,5 +1,5 @@
 ---
-- name: Deploying GitLab runner in openSUSE 15.1
+- name: Deploying GitLab runner
   hosts: runner
   remote_user: "{{ runner_host_user }}"
   become: yes
@@ -8,4 +8,4 @@
     - common
     - docker
     - runner
-    - node-exporter
+    # - node-exporter

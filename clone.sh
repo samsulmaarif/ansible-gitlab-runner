@@ -7,4 +7,4 @@ for t in {0..$vm_number};
     do virsh start runner0$t;
 done
 
-ansible all -i hosts -m raw -a "zypper install -y python python-xml" -u samsul --become --become-user root --ask-become-pass
+#ansible all -i hosts -m raw -a "zypper install -y python python-xml" -u samsul --become --become-user root --ask-become-pass

@@ -5,6 +5,15 @@
     name:
         - ntp
     state: present
+  when: ansible_os_family == "Suse"
+
+- name: Install NTP package from repository
+  apt:
+    name:
+        - ntp
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
 
 - name: Set timezone to Asia/Jakarta
   timezone:
