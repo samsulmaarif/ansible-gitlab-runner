@@ -4,4 +4,4 @@
   systemd:
     name: gitlab-runner
     state: restarted
-    force: yes
+    # force: yes
